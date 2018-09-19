@@ -6,6 +6,7 @@ const config = require('./config')
 const errorHandler = require('./app/handler/routeHandler/errorHandler')
 const seed = require('./app/db/seeds/index')
 const client = require('./app/client')
+const db = require('./app/model')
 
 app.post('/seed', async (req, res, next) => {
   await seed();
@@ -19,6 +20,10 @@ app.post('/webhook', line.middleware(config), (req, res, next) => {
     .then((result) => res.json(result))
 });
 
+app.get('/test', async (req, res) => {
+  const group = await db.TrGroup.find({ lineId:  "C536c1e9294ffd7a0f0ff022d71177e72"})
+  res.json(group).send()
+})
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 8080;

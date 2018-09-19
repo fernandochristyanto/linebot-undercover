@@ -110,6 +110,7 @@ async function broadcastRoleMessages(groupId) {
 async function start(event) {
   const groupLineId = event.source.groupId
   const group = await db.TrGroup.find({ lineId: groupLineId })
+    .populate('groupMembers')
   const canGameStart = (group) => group.groupMembers.length > 4 ? true : false
 
   if (group && canGameStart(group)) {
