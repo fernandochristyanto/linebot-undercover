@@ -47,15 +47,18 @@ async function handleJoin(event) {
       text: "Anda telah sukses tergabung dalam permainan undercover."
     })
     .then(async () => {
-      const user = client.getProfile(event.source.userId)
+      const user = await client.getProfile(event.source.userId)
       insertedMember = await db.TrGroupMember.create({
         groupId: group.id,
-        fullName: 
-        lineId
+        fullName: user.displayName,
+        lineId: user.userId
       })
     })
     .catch(err => {
-
+      client.replyMessage(event.replyToken, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "Anda harus berteman dengan bot untuk dapat join."
+      })
     })
   }
 }
