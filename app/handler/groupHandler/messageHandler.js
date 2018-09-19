@@ -13,7 +13,7 @@ module.exports = async (event) => {
 
   switch (message) {
     case COMMAND.JOIN:
-      break;
+      return await handleJoin(event)
     case COMMAND.LEAVE:
       break;
     case COMMAND.START:
