@@ -111,7 +111,9 @@ async function start(event) {
   const groupLineId = event.source.groupId
   const group = await db.TrGroup.find({ lineId: groupLineId })
     .populate('groupMembers')
-  const canGameStart = (group) => group.groupMembers.length > 4 ? true : false
+  const canGameStart = (group) => {
+    return group.groupMembers.length >= 4
+  }
 
   console.log(group)
   if (group && canGameStart(group)) {
