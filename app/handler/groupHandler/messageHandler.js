@@ -113,6 +113,7 @@ async function start(event) {
     .populate('groupMembers')
   const canGameStart = (group) => group.groupMembers.length > 4 ? true : false
 
+  console.log(group)
   if (group && canGameStart(group)) {
     await assignRolesToGroupMembers(group.id)
     await broadcastRoleMessages(group.id)
