@@ -13,6 +13,6 @@ module.exports = async (event) => {
 
   return client.pushMessage(event.source.groupId, {
     type: MESSAGE_TYPE.TEXT,
-    text: "Halo, Undercover bot adalah bot yang membantu permainan undercover menjadi lebih mudah.\n\nUntuk bergabung ke permainan, ketik join.\n\nUntuk membatalkan gabung permainan, ketik leave.\n\nUntuk memulai permainan, ketik start."
+    text: "Halo, Undercover bot adalah bot yang membantu permainan undercover menjadi lebih mudah.\n\nUntuk bergabung ke permainan, ketik join.\n\nUntuk melihat list pemain yang telah bergabung (join), ketik list.\n\nUntuk melihat tutorial, ketik tutorial.\n\nUntuk membatalkan gabung permainan, ketik leave.\n\nUntuk memulai permainan, ketik start."
   })
 }

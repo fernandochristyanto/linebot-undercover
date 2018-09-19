@@ -5,6 +5,8 @@ const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
 const COMMAND = {
   JOIN: "join",
   LEAVE: "leave",
+  LIST: "list",
+  TUTORIAL: "tutorial",
   START: "start"
 }
 
@@ -18,6 +20,28 @@ module.exports = async (event) => {
       return await handleLeave(event)
     case COMMAND.START:
       break;
+  }
+}
+
+async function handleList(event) {
+  const groupLineId = event.source.groupId;
+  let group = await db.TrGroup.findOne({ lineId: groupLineId });
+  if (group) {
+    const groupMembers = await db.TrGroupMember.find({ groupId: group.id })
+    let joinedMembersList = 'List user yang telah bergabung ke permainan:\n'
+    groupMembers.forEach(groupMember => {
+      joinedMembersList += `- ${groupMember.fullName}\n`
+    })
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: joinedMembersList
+    })
+  }
+  else {
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: "Belum ada user yang bergabung ke permainan."
+    })
   }
 }
 
