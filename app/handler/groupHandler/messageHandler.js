@@ -15,9 +15,40 @@ module.exports = async (event) => {
     case COMMAND.JOIN:
       return await handleJoin(event)
     case COMMAND.LEAVE:
-      break;
+      return await handleLeave(event)
     case COMMAND.START:
       break;
+  }
+}
+
+async function handleLeave(event) {
+  const groupLineId = event.source.groupId;
+  const userLineId = event.source.userId;
+
+  let group = await db.TrGroup.findOne({ lineId: groupLineId });
+  if (!group) {
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: "User belum bergabung ke permainan."
+    })
+  }
+  else {
+    let insertedMember = await db.TrGroupMember.findOne({ groupId: group.id, lineId: userLineId })
+    if (insertedMember) {
+      group.groupMembers.remove(insertedMember.id)
+      await group.save()
+      await insertedMember.remove();
+      return client.replyMessage(event.replyToken, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "Sukses keluar dari permainan."
+      })
+    }
+    else {
+      return client.replyMessage(event.replyToken, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "User belum bergabung ke permainan."
+      })
+    }
   }
 }
 
@@ -46,19 +77,21 @@ async function handleJoin(event) {
       type: MESSAGE_TYPE.TEXT,
       text: "Anda telah sukses tergabung dalam permainan undercover."
     })
-    .then(async () => {
-      const user = await client.getProfile(event.source.userId)
-      insertedMember = await db.TrGroupMember.create({
-        groupId: group.id,
-        fullName: user.displayName,
-        lineId: user.userId
+      .then(async () => {
+        const user = await client.getProfile(event.source.userId)
+        insertedMember = await db.TrGroupMember.create({
+          groupId: group.id,
+          fullName: user.displayName,
+          lineId: user.userId
+        })
+        group.groupMembers.push(insertedMember.id)
+        await group.save()
       })
-    })
-    .catch(err => {
-      client.replyMessage(event.replyToken, {
-        type: MESSAGE_TYPE.TEXT,
-        text: "Anda harus berteman dengan bot untuk dapat join."
+      .catch(err => {
+        client.replyMessage(event.replyToken, {
+          type: MESSAGE_TYPE.TEXT,
+          text: "Anda harus berteman dengan bot untuk dapat join."
+        })
       })
-    })
   }
 }
