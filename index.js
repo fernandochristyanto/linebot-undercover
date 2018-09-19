@@ -19,31 +19,6 @@ app.post('/webhook', line.middleware(config), (req, res, next) => {
     .then((result) => res.json(result))
 });
 
-app.get('/push', (req, res) => {
-  client.pushMessage("U36ea69af08b3f29926b9ff278fa8678c", {
-    type: 'text',
-    text: "Test aja"
-  })
-  .then(() => {
-    res.status(200).send()
-  })
-  .catch(err => {
-    res.status(400).send()
-  })
-})
-
-app.get('/profile', (req, res) => {
-  client.getProfile("Uc9fe578e7246aa873201b820bc7ae16f")
-  .then(profile => {
-    console.log(profile)
-    res.status(200).send()
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send()
-  })
-})
-
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 8080;

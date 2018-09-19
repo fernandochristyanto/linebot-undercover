@@ -1,7 +1,8 @@
 const db = require('../../model')
 const client = require('../../client')
 const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
-
+const { getRandomWordPair } = require('../../service/trWordPair')
+const { ROLE } = require('../../data/role')
 const COMMAND = {
   JOIN: "join",
   LEAVE: "leave",
@@ -24,6 +25,96 @@ module.exports = async (event) => {
       return await handleList(event)
     case COMMAND.TUTORIAL:
       return handleTutorial(event)
+  }
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+
+async function assignRolesToGroupMembers(groupId) {
+  const groupMembers = await db.TrGroupMember.find({ groupId: groupId })
+  const { correctWord, anotherWord } = await getRandomWordPair();
+  let integerArray = new Array
+  for (let i = 0; i < groupMembers; i++) {
+    integerArray.push(i)
+  }
+
+  // Assign ordering to users
+  integerArray = shuffle(integerArray)
+  for (let i = 0; i < groupMembers.length; i++) {
+    groupMembers[i].order = integerArray[i]
+    await groupMembers[i].save()
+  }
+
+  // Get whiteguy, and undercover random indexes
+  let randomIndex = Math.floor(Math.random() * integerArray.length)
+  const whiteGuyIndex = integerArray[randomIndex]
+  integerArray = integerArray.filter(int => int !== whiteGuyIndex)
+  randomIndex = Math.floor(Math.random() * integerArray.length)
+  const undercoverOneIndex = integerArray[randomIndex]
+  integerArray = integerArray.filter(int => int !== undercoverOneIndex)
+  randomIndex = Math.floor(Math.random() * integerArray.length)
+  const undercoverTwoIndex = integerArray[randomIndex]
+
+  // Assign roles to users
+  for (let index = 0; index < groupMembers.length; index++) {
+    if (index === whiteGuyIndex) {
+      groupMember[index].role = ROLE.WHITEGUY
+    }
+    else if (index === undercoverOneIndex || index === undercoverTwoIndex) {
+      groupMember[index].role = ROLE.UNDERCOVER
+      groupMember[index].word = anotherWord
+    }
+    else {
+      groupMember[index].role = ROLE.MEMBER
+      groupMember[index].word = correctWord
+    }
+    await groupMember[index].save()
+  }
+}
+
+async function broadcastRoleMessages(groupId) {
+  const groupMembers = await db.TrGroupMember.find({ groupId: groupId })
+  groupMembers.forEach(groupMember => {
+    let pushMessageText = '';
+    switch (groupMember.role) {
+      case ROLE.WHITEGUY:
+        pushMessageText = "Kamu adalah whiteguy!"
+        break;
+      case ROLE.UNDERCOVER:
+        pushMessageText = `Kata : ${groupMember.word}`
+        break;
+      case ROLE.MEMBER:
+        pushMessageText = `Kata : ${groupMember.word}`
+        break;
+    }
+
+    client.pushMessage(groupMember.lineId, {
+      type: MESSAGE_TYPE.TEXT,
+      text: pushMessageText
+    })
+  })
+}
+
+async function start(event) {
+  const groupLineId = event.source.groupId
+  const group = await db.TrGroup.find({ lineId: groupLineId })
+  const canGameStart = (group) => group.groupMembers.length > 3 ? true : false
+
+  if (group && canGameStart(group)) {
+    await assignRolesToGroupMembers(group.id)
+    await broadcastRoleMessages(group.id)
   }
 }
 
