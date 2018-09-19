@@ -112,10 +112,11 @@ async function start(event) {
   const group = await db.TrGroup.find({ lineId: groupLineId })
     .populate('groupMembers')
   const canGameStart = (group) => {
+    console.log(JSON.stringify(group, undefined, 2))
     return group.groupMembers.length >= 4
   }
 
-  console.log(group)
+  // console.log(group)
   if (group && canGameStart(group)) {
     await assignRolesToGroupMembers(group.id)
     await broadcastRoleMessages(group.id)
