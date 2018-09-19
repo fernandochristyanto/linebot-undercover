@@ -84,7 +84,7 @@ async function handleJoin(event) {
           fullName: user.displayName,
           lineId: user.userId
         })
-        group.groupMembers.push(insertedMember.id)
+        group.groupMembers.push(insertedMember)
         await group.save()
       })
       .catch(err => {
