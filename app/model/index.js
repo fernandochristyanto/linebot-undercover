@@ -8,5 +8,7 @@ mongoose.connect(config.mongodbUri || "mongodb://localhost:27017/linebot-linguis
 });
 
 module.exports = {
-  
+  TrWordPair: require('./trWordPair'),
+  TrGroup: require('./trGroup'),
+  TrGroupMember: require('./trGroupMember')
 }
