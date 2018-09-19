@@ -1,0 +1,17 @@
+{
+  "name": "undercover",
+  "version": "1.0.0",
+  "description": "Undercover bot to help randomize, assign user role and manage undercover game in a group.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fernando Christyanto",
+  "license": "ISC",
+  "dependencies": {
+    "@line/bot-sdk": "^6.2.1",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.15"
+  }
+}
