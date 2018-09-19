@@ -20,7 +20,7 @@ module.exports = async (event) => {
     case COMMAND.LEAVE:
       return await handleLeave(event)
     case COMMAND.START:
-      break;
+      return await start(event)
     case COMMAND.LIST:
       return await handleList(event)
     case COMMAND.TUTORIAL:
@@ -116,7 +116,7 @@ async function start(event) {
     await assignRolesToGroupMembers(group.id)
     await broadcastRoleMessages(group.id)
   }
-  else{
+  else {
     return client.replyMessage(event.replyToken, {
       type: MESSAGE_TYPE.TEXT,
       text: "Jumlah orang untuk memulai game minimal 4 orang"
