@@ -110,11 +110,17 @@ async function broadcastRoleMessages(groupId) {
 async function start(event) {
   const groupLineId = event.source.groupId
   const group = await db.TrGroup.find({ lineId: groupLineId })
-  const canGameStart = (group) => group.groupMembers.length > 3 ? true : false
+  const canGameStart = (group) => group.groupMembers.length > 4 ? true : false
 
   if (group && canGameStart(group)) {
     await assignRolesToGroupMembers(group.id)
     await broadcastRoleMessages(group.id)
+  }
+  else{
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: "Jumlah orang untuk memulai game minimal 4 orang"
+    })
   }
 }
 
