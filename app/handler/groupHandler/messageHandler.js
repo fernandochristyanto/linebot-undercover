@@ -27,7 +27,7 @@ module.exports = async (event) => {
   }
 }
 
-function handleTutorial() {
+function handleTutorial(event) {
   const text = `
   UndercoverBOT adalah bot yang membantu user-user di sebuah group dalam bermain undercover.\n\n
   Apa itu undercover?\n
