@@ -12,6 +12,9 @@ const trGroup = new mongoose.Schema({
   correctWord: {
     type: String
   },
+  currentOrder: {
+    type: Number
+  },
   groupMembers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TrGroupMember'

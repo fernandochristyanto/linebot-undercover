@@ -3,6 +3,8 @@ const client = require('../../client')
 const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
 const { getRandomWordPair } = require('../../service/trWordPair')
 const { ROLE } = require('../../data/role')
+const { setAllMemberVoteStatus } = require('../../service/trGroup')
+const { ingamePostbackTemplate } = require('../../template/ingamePostbackTemplate')
 const COMMAND = {
   JOIN: "join",
   LEAVE: "leave",
@@ -42,9 +44,9 @@ function shuffle(array) {
   return array;
 }
 
-async function assignRolesToGroupMembers(groupId) {
+async function assignRolesToGroupMembers(groupId, wordPair) {
   const groupMembers = await db.TrGroupMember.find({ groupId: groupId })
-  const { correctWord, anotherWord } = await getRandomWordPair();
+  const { correctWord, anotherWord } = wordPair;
   let integerArray = new Array
   for (let i = 0; i < groupMembers; i++) {
     integerArray.push(i)
@@ -113,11 +115,21 @@ async function start(event) {
     .populate('groupMembers')
   const canGameStart = (group) => group.groupMembers.length >= 4
 
-  console.log(group)
-  if (group && canGameStart(group)) {
-    await assignRolesToGroupMembers(group.id)
+  if (group && !group.started && canGameStart(group)) {
+    const wordPair = await getRandomWordPair();
+    await assignRolesToGroupMembers(group.id, wordPair)
     await broadcastRoleMessages(group.id)
-  }
+    await setAllMemberVoteStatus(groupLineId, false)
+
+    group.started = true;
+    group.correctWord = wordPair.correctWord
+    group.currentOrder = 0;
+    await group.save()
+
+    // TODO: SEND BUTTON TEMPLATE WITH POSTBACK
+    const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: 0 });
+    client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, 0))
+  } 
   else {
     return client.replyMessage(event.replyToken, {
       type: MESSAGE_TYPE.TEXT,
