@@ -24,6 +24,13 @@ const trGroupMember = new mongoose.Schema({
   },
   voted: {
     type: Boolean
+  },
+  eliminated: {
+    type: Boolean
+  },
+  voteUserLineId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TrGroupMember'
   }
 }, {
     timestamps: true
