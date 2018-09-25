@@ -9,7 +9,7 @@ exports.ingamePostbackTemplate = (currentUserName, currOrder) => {
           type: 'postback',
           label: 'Berikut',
           text: 'Berikut',
-          data: `curr=${currOrder}&ingame=true`
+          data: `order=${currOrder}&ingame=true`
         }
       ],
       title: currentUserName,

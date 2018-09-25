@@ -24,31 +24,44 @@ async function ingamePostbackHandler(event, data) {
   const currentOrder = prevOrder + 1
 
   const group = await db.TrGroup.findOne({ lineId: event.source.groupId })
-  const hasTurnEnded = async (group) => {
+  const hasTurnEnded = await (async (group) => {
 
     if (group.groupMembers.length - 1 == prevOrder)
       return true
     return false
-  }
+  })();
 
-  if (hasTurnEnded(group)) {
-    // Begin voting
-    client.replyMessage(event.replyToken, {
-      type: MESSAGE_TYPE.TEXT,
-      text: "Putaran telah selesai... Memulai voting."
-    })
+  const isVoteSessionNow = await (async (group) => {
+    if (group.groupMembers.length == prevOrder)
+      return true
+    return false
+  })();
 
-    // Broadcast ke members
-    const groupMembers = await db.TrGroupMember.find({ groupId: group.id })
-    for (let i = 0; i < groupMembers.length; i++) {
-      let groupMember = groupMembers[i]
-      client.pushMessage(groupMember.lineId, mapGroupMembersToVoteBtn(groupMembers, group.lineId, groupMember.lineId))
-    }
+  if (isVoteSessionNow) {
+    // Send to group, members has to vote 
   }
   else {
-    // Send ingame postback
-    const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder })
-    return client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, currentOrder))
+    group.currentOrder = currentOrder;
+    if (hasTurnEnded(group)) {
+      // Begin voting
+      client.replyMessage(event.replyToken, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "Putaran telah selesai... Memulai voting."
+      })
+
+      // Broadcast ke members
+      const groupMembers = await db.TrGroupMember.find({ groupId: group.id })
+      for (let i = 0; i < groupMembers.length; i++) {
+        let groupMember = groupMembers[i]
+        client.pushMessage(groupMember.lineId, mapGroupMembersToVoteBtn(groupMembers, group.lineId, groupMember.lineId))
+      }
+    }
+    else {
+      // Send ingame postback
+      const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder })
+      return client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, currentOrder))
+    }
+    await group.save();
   }
 }
 
