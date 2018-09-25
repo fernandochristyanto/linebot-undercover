@@ -39,6 +39,10 @@ async function ingamePostbackHandler(event, data) {
 
   if (isVoteSessionNow) {
     // Send to group, members has to vote 
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: "Putaran telah selesai... Voting sedang berlangsung."
+    })
   }
   else {
     group.currentOrder = currentOrder;
