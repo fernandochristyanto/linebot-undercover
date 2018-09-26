@@ -20,7 +20,7 @@ module.exports = async (event) => {
 }
 
 async function ingamePostbackHandler(event, data) {
-  const prevOrder = data.order
+  const prevOrder = parseInt(data.order)
   const currentOrder = prevOrder + 1
 
   const group = await db.TrGroup.findOne({ lineId: event.source.groupId })
