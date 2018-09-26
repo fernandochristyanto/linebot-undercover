@@ -72,17 +72,17 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
   // Assign roles to users
   for (let index = 0; index < groupMembers.length; index++) {
     if (index === whiteGuyIndex) {
-      groupMember[index].role = ROLE.WHITEGUY
+      groupMembers[index].role = ROLE.WHITEGUY
     }
     else if (index === undercoverOneIndex || index === undercoverTwoIndex) {
-      groupMember[index].role = ROLE.UNDERCOVER
-      groupMember[index].word = anotherWord
+      groupMembers[index].role = ROLE.UNDERCOVER
+      groupMembers[index].word = anotherWord
     }
     else {
-      groupMember[index].role = ROLE.MEMBER
-      groupMember[index].word = correctWord
+      groupMembers[index].role = ROLE.MEMBER
+      assignRolesToGroupMembers[index].word = correctWord
     }
-    await groupMember[index].save()
+    await groupMembers[index].save()
   }
 }
 
@@ -114,6 +114,12 @@ async function start(event) {
   const group = await db.TrGroup.findOne({ lineId: groupLineId })
     .populate('groupMembers')
   const canGameStart = (group) => group.groupMembers.length >= 4
+
+  if(group.started)
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: "Permainan telah dimulai.."
+    })
 
   if (group && !group.started && canGameStart(group)) {
     const wordPair = await getRandomWordPair();
