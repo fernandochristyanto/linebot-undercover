@@ -137,14 +137,22 @@ async function memberHasVoted(event, group) {
 
   if (notVotedGroupMembers.length > 0) {
     // Ada yg belum voting
-
+    const groupLineId = group.lineId;
+    const replyText = mapVotedMembersToReplyText(votedGroupMembers)
+    client.pushMessage(groupLineId, {
+      type: MESSAGE_TYPE.TEXT,
+      text: replyText
+    })
   }
   else {
-
+    
   }
 }
 
-function mapNotVotedMembersToReplyText(notVotedGroupMembers) {
-  let replyText = ''
-  
+function mapVotedMembersToReplyText(votedGroupMembers) {
+  let replyText = 'Member yang telah melakukan vote : '
+  votedGroupMembers.forEach((groupMember) => {
+    replyText += `- ${groupMember.fullName}\n`
+  })
+  return replyText;
 }
