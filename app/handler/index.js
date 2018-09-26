@@ -1,5 +1,6 @@
 const { MESSAGE_SOURCE_TYPE } = require('../data/messagingAPI/messageSourceType')
 const groupHandler = require('./groupHandler')
+const userHandler = require('./userHandler')
 
 module.exports = (event) => {
   const source = event.source.type;
