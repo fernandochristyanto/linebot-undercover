@@ -55,7 +55,7 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
   // Assign ordering to users
   integerArray = shuffle(integerArray)
   for (let i = 0; i < groupMembers.length; i++) {
-    groupMembers[i].order = integerArray[i]
+    groupMembers[i].orderNumber = integerArray[i]
     await groupMembers[i].save()
   }
 
