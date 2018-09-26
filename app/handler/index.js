@@ -6,5 +6,7 @@ module.exports = (event) => {
   switch (source) {
     case MESSAGE_SOURCE_TYPE.GROUP:
       return groupHandler(event);
+    case MESSAGE_SOURCE_TYPE.USER:
+      return userHandler(event);
   }
 }
