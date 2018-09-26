@@ -32,7 +32,7 @@ async function ingamePostbackHandler(event, data) {
   })(group);
 
   const isVoteSessionNow = await (async (group) => {
-    if (group.groupMembers.length == prevOrder)
+    if (group.groupMembers.length == currentOrder)
       return true
     return false
   })(group);
