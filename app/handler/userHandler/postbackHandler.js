@@ -81,7 +81,7 @@ async function memberHasVoted(event, group) {
 }
 
 function mapVotedMembersToReplyText(votedGroupMembers) {
-  let replyText = 'Member yang telah melakukan vote : '
+  let replyText = 'Member yang telah melakukan vote : \n'
   votedGroupMembers.forEach((groupMember) => {
     replyText += `- ${groupMember.fullName}\n`
   })
