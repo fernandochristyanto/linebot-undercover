@@ -59,6 +59,8 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
     await groupMembers[i].save()
   }
 
+  console.log("Integer array : ", JSON.stringify(integerArray, undefined, 2))
+
   // Get whiteguy, and undercover random indexes
   let randomIndex = Math.floor(Math.random() * integerArray.length)
   const whiteGuyIndex = integerArray[randomIndex]
