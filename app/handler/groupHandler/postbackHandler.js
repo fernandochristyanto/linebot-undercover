@@ -24,23 +24,24 @@ async function ingamePostbackHandler(event, data) {
   const currentOrder = prevOrder + 1
 
   const group = await db.TrGroup.findOne({ lineId: event.source.groupId })
+  const groupMembers = await db.TrGroupMember.find({ groupId: group.id, eliminated: false })
 
   // Check is postback sender correct (order)
   if (group.currentOrder != prevOrder)
     return null;
 
-  const hasTurnEnded = await (async (group) => {
+  const hasTurnEnded = await (async () => {
 
-    if (group.groupMembers.length - 1 == prevOrder)
+    if (groupMembers.length - 1 == prevOrder)
       return true
     return false
-  })(group);
+  })();
 
-  const isVoteSessionNow = await (async (group) => {
-    if (group.groupMembers.length == group.currentOrder)
+  const isVoteSessionNow = await (async () => {
+    if (groupMembers.length == group.currentOrder)
       return true
     return false
-  })(group);
+  })();
 
   if (isVoteSessionNow) {
     // Send to group, members has to vote 
@@ -59,7 +60,6 @@ async function ingamePostbackHandler(event, data) {
       })
 
       // Broadcast ke members
-      const groupMembers = await db.TrGroupMember.find({ groupId: group.id })
       for (let i = 0; i < groupMembers.length; i++) {
         let groupMember = groupMembers[i]
         client.pushMessage(groupMember.lineId, mapGroupMembersToVoteBtn(groupMembers, group.lineId, groupMember.lineId))
