@@ -8,7 +8,6 @@ exports.getVoteBtnTemplate = (fullName, groupLineId, votedUserLineId, currentUse
         {
           type: 'postback',
           label: 'Vote',
-          text: 'Vote',
           data: `vote=true&groupLineId=${groupLineId}&votedUserLineId=${votedUserLineId}&userLineId=${currentUserLineId}`
         }
       ],
