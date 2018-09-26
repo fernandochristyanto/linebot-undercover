@@ -24,7 +24,7 @@ async function ingamePostbackHandler(event, data) {
   const currentOrder = prevOrder + 1
 
   const group = await db.TrGroup.findOne({ lineId: event.source.groupId })
-  const groupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: { eliminated: false, eliminated: undefined } })
+  const groupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }] })
 
   // Check is postback sender correct (order)
   if (group.currentOrder != prevOrder)
