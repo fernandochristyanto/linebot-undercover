@@ -34,6 +34,7 @@ async function votePostbackHandler(event, data) {
   if (isVoteSessionNow) {
     if (!member.voted) {
       member.voteUserId = votedMember.id
+      member.voted = true
       await member.save()
       return await memberHasVoted(event, group);
     }
