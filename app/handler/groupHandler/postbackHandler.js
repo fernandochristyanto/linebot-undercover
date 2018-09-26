@@ -59,13 +59,14 @@ async function ingamePostbackHandler(event, data) {
         let groupMember = groupMembers[i]
         client.pushMessage(groupMember.lineId, mapGroupMembersToVoteBtn(groupMembers, group.lineId, groupMember.lineId))
       }
+      await group.save();
     }
     else {
       // Send ingame postback
       const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder })
+      await group.save();
       return client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, currentOrder))
     }
-    await group.save();
   }
 }
 
