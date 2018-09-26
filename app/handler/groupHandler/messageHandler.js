@@ -48,7 +48,7 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
   const groupMembers = await db.TrGroupMember.find({ groupId: groupId })
   const { correctWord, anotherWord } = wordPair;
   let integerArray = new Array
-  for (let i = 0; i < groupMembers; i++) {
+  for (let i = 0; i < groupMembers.length; i++) {
     integerArray.push(i)
   }
 
