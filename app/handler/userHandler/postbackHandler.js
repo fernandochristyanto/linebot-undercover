@@ -23,7 +23,7 @@ async function votePostbackHandler(event, data) {
 
   const { groupLineId, votedUserLineId, userLineId } = data;
   const group = await db.TrGroup.findOne({ lineId: groupLineId })
-  const member = await db.TrGroupMember.findOne({ groupId: group.id, lineId, userLineId })
+  const member = await db.TrGroupMember.findOne({ groupId: group.id, lineId: userLineId })
   const votedMember = await db.TrGroupMember.findOne({ groupId: group.id, lineId: votedUserLineId })
   const isVoteSessionNow = await (async (group) => {
     if (group.groupMembers.length == group.currentOrder)
