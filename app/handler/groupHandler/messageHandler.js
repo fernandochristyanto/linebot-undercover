@@ -16,7 +16,7 @@ const COMMAND = {
 module.exports = async (event) => {
   const message = event.message.text;
 
-  switch (message) {
+  switch (message.toLowerCase()) {
     case COMMAND.JOIN:
       return await handleJoin(event)
     case COMMAND.LEAVE:
