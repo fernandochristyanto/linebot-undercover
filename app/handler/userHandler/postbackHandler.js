@@ -35,7 +35,7 @@ async function votePostbackHandler(event, data) {
     if (!member.voted) {
       member.voteUserId = votedMember.id
       await member.save()
-      return await memberHasVoted();
+      return await memberHasVoted(event, group);
     }
     else {
       return client.replyMessage(event.replyToken, {
