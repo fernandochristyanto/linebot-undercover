@@ -46,7 +46,7 @@ async function ingamePostbackHandler(event, data) {
   }
   else {
     group.currentOrder = currentOrder;
-    if (hasTurnEnded(group)) {
+    if (hasTurnEnded) {
       // Begin voting
       client.replyMessage(event.replyToken, {
         type: MESSAGE_TYPE.TEXT,
