@@ -69,6 +69,10 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
   randomIndex = Math.floor(Math.random() * integerArray.length)
   const undercoverTwoIndex = integerArray[randomIndex]
 
+  console.log("WhiteguyIndex : ", whiteGuyIndex)
+  console.log("undercover1 : ", undercoverOneIndex)
+  console.log("undercover2 : ", undercoverTwoIndex)
+
   // Assign roles to users
   for (let index = 0; index < groupMembers.length; index++) {
     if (index === whiteGuyIndex) {
