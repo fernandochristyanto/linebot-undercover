@@ -80,7 +80,7 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
     }
     else {
       groupMembers[index].role = ROLE.MEMBER
-      assignRolesToGroupMembers[index].word = correctWord
+      groupMembers[index].word = correctWord
     }
     await groupMembers[index].save()
   }
