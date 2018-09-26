@@ -23,3 +23,12 @@ exports.setMemberVoteStatus = async (groupLineId, memberLineId, hasVoted) => {
     }
   }
 }
+
+exports.removeUneliminatedOrderNumberGap = async (groupId) => {
+  let groupMembers = await db.TrGroupMember.find({ groupId: groupId, $or: [{ eliminated: false }, { eliminated: undefined }] }).sort({ order: 'ascending' })
+
+  for (let i = 0; i < groupMembers.length; i++) {
+    groupMembers[i].orderNumber = i
+    await groupMembers[i].save()
+  }
+}

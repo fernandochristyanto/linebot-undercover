@@ -28,6 +28,12 @@ const trGroupMember = new mongoose.Schema({
   eliminated: {
     type: Boolean
   },
+  eliminationGuess: {
+    type: Boolean
+  },
+  finalTwoGuess: {
+    type: Boolean
+  },
   voteUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TrGroupMember'

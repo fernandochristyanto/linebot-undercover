@@ -4,6 +4,9 @@ const client = require('../../client')
 const { ingamePostbackTemplate } = require('../../template/ingamePostbackTemplate')
 const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
 const { getVoteBtnTemplate } = require('../../template/voteBtnTemplate')
+const { getUnEliminatedMembers } = require('../../service/trGroupMember')
+const { removeUneliminatedOrderNumberGap } = require('../../service/trGroup')
+const { ROLE } = require('../../data/role')
 
 module.exports = async (event) => {
   const postbackData = event.postback.data
@@ -76,7 +79,118 @@ async function memberHasVoted(event, group) {
     })
   }
   else {
+    return await toNextTurn(event, group)
+  }
+}
 
+async function toNextTurn(event, group) {
+  const groupMembers = await getUnEliminatedMembers(group.id)
+  const getMostVotedMemberId = () => {
+    members = {}
+    groupMembers.forEach(groupMember => {
+      if (!member[groupMember.voteUserId]) {
+        member[groupMember.voteUserId] = 0
+      }
+      else {
+        member[groupMember.voteUserId] += 1;
+      }
+    })
+
+    let currentTopCount = 0;
+    let mostVotedMembers = new Array()
+    Object.keys(members).forEach((key) => {
+      if (members[key] == currentTopCount) {
+        mostVotedMembers.push(key)
+      }
+      else if (members[key] > currentTopCount) {
+        currentTopCount = members[key]
+        mostVotedMembers = new Array()
+        mostVotedMembers.push(key)
+      }
+    })
+
+    return mostVotedMembers;
+  }
+
+  const votedMembers = getMostVotedMemberId()
+  if (votedMembers.length > 0) {
+    if (votedMembers.length == 1) {
+      // set as eliminated
+      const eliminateMember = await db.TrGroupMember.findById(votedMembers[0])
+      eliminateMember.eliminated = true;
+      await eliminateMember.save()
+      await removeUneliminatedOrderNumberGap(group.id)
+      client.pushMessage(group.lineId, {
+        type: MESSAGE_TYPE.TEXT,
+        text: `${eliminateMember.fullName} telah di eliminasi berdasarkan vote. Role: ${eliminateMember.role}.`
+      })
+      if (eliminateMember.role == ROLE.WHITEGUY) {
+        client.pushMessage(eliminateMember.lineId, {
+          type: MESSAGE_TYPE.TEXT,
+          text: "Whiteguy akan di eliminasi berdasar vote. Silahkan ketik kalimat sesungguhnya. Apabila benar, maka whiteguy secara otomatis menang."
+        })
+        eliminateMember.eliminationGuess = true
+        await eliminateMember.save()
+      }
+      else {
+        await controlHasGameEnded(event, group)
+      }
+    }
+    else {
+      client.pushMessage(group.lineId, {
+        type: MESSAGE_TYPE.TEXT,
+        text: `Terdapat lebih dari 1 member dengan jumlah vote yang sama, tidak ada member yang ter-eliminasi di putaran ini.`
+      })
+      await controlHasGameEnded(event, group)
+    }
+  }
+}
+
+async function controlHasGameEnded(event, group) {
+  const unEliminatedMembers = await getUnEliminatedMembers(group.id)
+  if (unEliminatedMembers.count <= 2) {
+    const whiteGuyArr = unEliminatedMembers.filter(member => member.role == ROLE.WHITEGUY)
+    if (whiteGuyArr.length > 0) {
+      // Masih ada whiteguy
+      client.pushMessage(whiteGuyArr[0].lineId, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "Tersisa 2 pemain, whiteguy silahkan menebak kalimat yang benar. Apabila tebakan benar, maka whiteguy otomatis menang."
+      })
+      whiteGuyArr[0].finalTwoGuess = true
+      await whiteGuyArr[0].save()
+    }
+    else {
+      const underCoverArr = unEliminatedMembers.filter(member => member.role == ROLE.UNDERCOVER)
+      if (underCoverArr.length == 2) {
+        // Undercover win
+        client.pushMessage(group.lineId, {
+          type: MESSAGE_TYPE.TEXT,
+          text: "Tersisa 2 undercover. Undercover menang!"
+        })
+      }
+      else {
+        // Draw
+        client.pushMessage(group.lineId, {
+          type: MESSAGE_TYPE.TEXT,
+          text: "Tersisa 2 pemain. Permainan berakhir seri."
+        })
+      }
+    }
+  }
+  else {
+    const underCoverAndWhiteGuyArr = unEliminatedMembers.filter(member => member.role == ROLE.UNDERCOVER || member.role == ROLE.WHITEGUY)
+    if (underCoverAndWhiteGuyArr.length == 0) {
+      // Member win
+      client.pushMessage(group.lineId, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "Hanya member yang tersisa. Permainan selesai dimenangi oleh member!"
+      })
+    }
+    else {
+      // To next round
+      const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: 0 });
+      client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
+    }
   }
 }
 
