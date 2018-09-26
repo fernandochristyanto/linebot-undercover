@@ -15,7 +15,7 @@ module.exports = async (event) => {
     return await ingamePostbackHandler(event, data)
   }
   else if (data.vote) {
-    return await votePostbackHandler(event)
+    return await votePostbackHandler(event, data)
   }
 }
 
@@ -26,7 +26,7 @@ async function ingamePostbackHandler(event, data) {
   const group = await db.TrGroup.findOne({ lineId: event.source.groupId })
 
   // Check is postback sender correct (order)
-  if(group.currentOrder != prevOrder)
+  if (group.currentOrder != prevOrder)
     return null;
 
   const hasTurnEnded = await (async (group) => {
@@ -85,9 +85,66 @@ function mapGroupMembersToVoteBtn(groupMembers, groupLineId, currentUserLineId) 
   return voteBtns;
 }
 
-async function votePostbackHandler(event) {
+async function votePostbackHandler(event, data) {
   // TODO: update current member's voteUserId
   // TODO: update current member's voted = true
   // TODO: get all group members who has voted, and show list
   // TODO: see if all group members have voted
+
+  const { groupLineId, votedUserLineId, userLineId } = data;
+  const group = await db.TrGroup.findOne({ lineId: groupLineId })
+  const member = await db.TrGroupMember.findOne({ groupId: group.id, lineId, userLineId })
+  const votedMember = await db.TrGroupMember.findOne({ groupId: group.id, lineId: votedUserLineId })
+  const isVoteSessionNow = await (async (group) => {
+    if (group.groupMembers.length == group.currentOrder)
+      return true
+    return false
+  })(group);
+
+  if (isVoteSessionNow) {
+    if (!member.voted) {
+      member.voteUserId = votedMember.id
+      await member.save()
+      return await memberHasVoted();
+    }
+    else {
+      return client.replyMessage(event.replyToken, {
+        type: MESSAGE_TYPE.TEXT,
+        text: "Anda telah melakukan voting pada putaran ini."
+      })
+    }
+  }
+  else {
+    return client.replyMessage(event.replyToken, {
+      type: MESSAGE_TYPE.TEXT,
+      text: "Sekarang bukan waktunya untuk melakukan vote."
+    })
+  }
+}
+
+async function memberHasVoted(event, group) {
+  const groupMembers = await db.TrGroupMember.find({ groupId: group.id })
+  let votedGroupMembers = new Array()
+  let notVotedGroupMembers = new Array()
+  for (let i = 0; i < groupMembers.length; i++) {
+    if (groupMembers[i].voted) {
+      votedGroupMembers.push(groupMembers[i])
+    }
+    else {
+      notVotedGroupMembers.push(groupMembers[i])
+    }
+  }
+
+  if (notVotedGroupMembers.length > 0) {
+    // Ada yg belum voting
+
+  }
+  else {
+
+  }
+}
+
+function mapNotVotedMembersToReplyText(notVotedGroupMembers) {
+  let replyText = ''
+  
 }

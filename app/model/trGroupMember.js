@@ -28,7 +28,7 @@ const trGroupMember = new mongoose.Schema({
   eliminated: {
     type: Boolean
   },
-  voteUserLineId: {
+  voteUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TrGroupMember'
   }

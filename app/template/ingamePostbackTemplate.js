@@ -1,7 +1,7 @@
 exports.ingamePostbackTemplate = (currentUserName, currOrder) => {
   return {
     type: 'template',
-    altText: 'this is a buttons template',
+    altText: 'Deskripsikan kalimat',
     template: {
       type: 'buttons',
       actions: [
