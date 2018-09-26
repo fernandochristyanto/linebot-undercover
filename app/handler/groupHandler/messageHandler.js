@@ -59,8 +59,6 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
     await groupMembers[i].save()
   }
 
-  console.log("Integer array : ", JSON.stringify(integerArray, undefined, 2))
-
   // Get whiteguy, and undercover random indexes
   let randomIndex = Math.floor(Math.random() * integerArray.length)
   const whiteGuyIndex = integerArray[randomIndex]
@@ -70,10 +68,6 @@ async function assignRolesToGroupMembers(groupId, wordPair) {
   integerArray = integerArray.filter(int => int !== undercoverOneIndex)
   randomIndex = Math.floor(Math.random() * integerArray.length)
   const undercoverTwoIndex = integerArray[randomIndex]
-
-  console.log("WhiteguyIndex : ", whiteGuyIndex)
-  console.log("undercover1 : ", undercoverOneIndex)
-  console.log("undercover2 : ", undercoverTwoIndex)
 
   // Assign roles to users
   for (let index = 0; index < groupMembers.length; index++) {

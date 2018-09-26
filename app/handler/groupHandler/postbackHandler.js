@@ -29,13 +29,13 @@ async function ingamePostbackHandler(event, data) {
     if (group.groupMembers.length - 1 == prevOrder)
       return true
     return false
-  })();
+  })(group);
 
   const isVoteSessionNow = await (async (group) => {
     if (group.groupMembers.length == prevOrder)
       return true
     return false
-  })();
+  })(group);
 
   if (isVoteSessionNow) {
     // Send to group, members has to vote 
