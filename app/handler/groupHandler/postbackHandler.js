@@ -63,9 +63,11 @@ async function ingamePostbackHandler(event, data) {
     }
     else {
       // Send ingame postback
-      const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder })
-      await group.save();
-      return client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, currentOrder))
+      if (group.currentOrder - 1 === prevOrder) {
+        const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder })
+        await group.save();
+        return client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, currentOrder))
+      }
     }
   }
 }
