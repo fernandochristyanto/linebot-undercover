@@ -39,6 +39,10 @@ async function votePostbackHandler(event, data) {
       member.voteUserId = votedMember.id
       member.voted = true
       await member.save()
+      client.replyMessage(event.replyToken, {
+        type: MESSAGE_TYPE.TEXT,
+        text: `Sukses melakukan vote terhadap ${votedMember.fullName}.`
+      })
       return await memberHasVoted(event, group);
     }
     else {
