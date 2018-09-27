@@ -4,7 +4,7 @@ const client = require('../../client')
 const { ingamePostbackTemplate } = require('../../template/ingamePostbackTemplate')
 const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
 const { getVoteBtnTemplate } = require('../../template/voteBtnTemplate')
-const { getUnEliminatedMembers } = require('../../service/trGroupMember')
+const { getUnEliminatedMembers, clearGroupMemberVote } = require('../../service/trGroupMember')
 const { removeUneliminatedOrderNumberGap } = require('../../service/trGroup')
 const { ROLE } = require('../../data/role')
 
@@ -79,6 +79,7 @@ async function memberHasVoted(event, group) {
     })
   }
   else {
+    await clearGroupMemberVote(group.id)
     return await toNextTurn(event, group)
   }
 }
