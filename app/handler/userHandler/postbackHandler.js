@@ -207,6 +207,7 @@ async function controlHasGameEnded(event, group) {
     else {
       // To next round
       const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: 0 });
+      console.log("Pushing message to group again")
       client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
     }
   }
