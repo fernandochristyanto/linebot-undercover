@@ -169,7 +169,7 @@ async function toNextTurn(event, group) {
 async function controlHasGameEnded(event, group) {
   const unEliminatedMembers = await getUnEliminatedMembers(group.id)
   console.log("Uneliminated members : ", unEliminatedMembers)
-  if (unEliminatedMembers.count <= 2) {
+  if (unEliminatedMembers.length <= 2) {
     const whiteGuyArr = unEliminatedMembers.filter(member => member.role == ROLE.WHITEGUY)
     if (whiteGuyArr.length > 0) {
       // Masih ada whiteguy
