@@ -90,7 +90,6 @@ async function memberHasVoted(event, group) {
     })
   }
   else {
-    await clearGroupMemberVote(group.id)
     return await toNextTurn(event, group)
   }
 }
@@ -155,6 +154,7 @@ async function toNextTurn(event, group) {
       })
       await controlHasGameEnded(event, group)
     }
+    await clearGroupMemberVote(group.id)
   }
 }
 
