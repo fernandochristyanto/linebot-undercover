@@ -107,6 +107,8 @@ async function toNextTurn(event, group) {
       }
     })
 
+    console.log("getMostVotedMemberId (members {} : )", JSON.stringify(members, undefined, 2))
+
     let currentTopCount = 0;
     let mostVotedMembers = new Array()
     Object.keys(members).forEach((key) => {
@@ -119,6 +121,8 @@ async function toNextTurn(event, group) {
         mostVotedMembers.push(key)
       }
     })
+
+    console.log("getMostVotedMemberId (mostVotedMembers [] : )", JSON.stringify(mostVotedMembers, undefined, 2))
 
     return mostVotedMembers;
   }
