@@ -3,9 +3,8 @@ const db = require('../../model')
 const client = require('../../client')
 const { ingamePostbackTemplate } = require('../../template/ingamePostbackTemplate')
 const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
-const { getVoteBtnTemplate } = require('../../template/voteBtnTemplate')
 const { getUnEliminatedMembers, clearGroupMemberVote } = require('../../service/trGroupMember')
-const { removeUneliminatedOrderNumberGap } = require('../../service/trGroup')
+const { removeUneliminatedOrderNumberGap, removeGroupAndMember } = require('../../service/trGroup')
 const { ROLE } = require('../../data/role')
 
 module.exports = async (event) => {
@@ -190,6 +189,7 @@ async function controlHasGameEnded(event, group) {
           type: MESSAGE_TYPE.TEXT,
           text: "Tersisa 2 undercover. Undercover menang!"
         })
+        await removeGroupAndMember(group.id)
       }
       else {
         // Draw
@@ -197,6 +197,7 @@ async function controlHasGameEnded(event, group) {
           type: MESSAGE_TYPE.TEXT,
           text: "Tersisa 2 pemain. Permainan berakhir seri."
         })
+        await removeGroupAndMember(group.id)
       }
     }
   }
@@ -208,6 +209,7 @@ async function controlHasGameEnded(event, group) {
         type: MESSAGE_TYPE.TEXT,
         text: "Hanya member yang tersisa. Permainan selesai dimenangi oleh member!"
       })
+      await removeGroupAndMember(group.id)
     }
     else {
       // To next round

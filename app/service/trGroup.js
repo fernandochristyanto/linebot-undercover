@@ -1,4 +1,5 @@
 const db = require('../model')
+const ObjectId = require('mongodb').ObjectId;
 
 exports.setAllMemberVoteStatus = async (groupLineId, hasVoted) => {
   const group = await db.TrGroup.findOne({ lineId: groupLineId })
@@ -31,4 +32,10 @@ exports.removeUneliminatedOrderNumberGap = async (groupId) => {
     groupMembers[i].orderNumber = i
     await groupMembers[i].save()
   }
+}
+
+exports.removeGroupAndMember = async (groupId) => {
+  const group = await db.TrGroup.findById(groupId)
+  await db.TrGroupMember.remove({ groupId: group.id })
+  await group.remove()
 }

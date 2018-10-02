@@ -5,7 +5,7 @@ const { ingamePostbackTemplate } = require('../../template/ingamePostbackTemplat
 const { MESSAGE_TYPE } = require('../../data/messagingAPI/messageType')
 const { getVoteBtnTemplate } = require('../../template/voteBtnTemplate')
 const { getUnEliminatedMembers, clearGroupMemberVote } = require('../../service/trGroupMember')
-const { removeUneliminatedOrderNumberGap } = require('../../service/trGroup')
+const { removeGroupAndMember } = require('../../service/trGroup')
 const { ROLE } = require('../../data/role')
 
 module.exports = async (event) => {
@@ -15,20 +15,18 @@ module.exports = async (event) => {
   const isUserWhiteguy = (user) => user.role == ROLE.WHITEGUY
   const canWhiteGuyGuess = (whiteguy) => whiteguy.eliminationGuess || whiteguy.finalTwoGuess
 
-  console.log("User : ", user)
   if (isUserWhiteguy(user)) {
     if (canWhiteGuyGuess(user)) {
       const guess = event.message.text
       const group = await db.TrGroup.findById(user.groupId)
-      console.log("Group : ", group)
       if (guess.toLowerCase() === group.correctWord.toLowerCase()) {
         // Tebakan benar
-        return client.pushMessage(group.lineId, {
+        client.pushMessage(group.lineId, {
           type: MESSAGE_TYPE.TEXT,
           text: "Tebakan whiteguy benar, game telah berakhir dimenangkan oleh whiteguy."
         })
 
-        // TODO: end game
+        await removeGroupAndMember(user.groupId)
       }
       else {
         // Tebakan salah
@@ -49,7 +47,7 @@ module.exports = async (event) => {
             text: `Tebakan whiteguy salah, ${remainingUser.role} memenangkan game`
           })
 
-          // TODO: end game
+          await removeGroupAndMember(user.groupId)
         }
       }
     }
