@@ -160,6 +160,8 @@ async function toNextTurn(event, group) {
         type: MESSAGE_TYPE.TEXT,
         text: `Terdapat lebih dari 1 member dengan jumlah vote yang sama, tidak ada member yang ter-eliminasi di putaran ini.`
       })
+      group.currentOrder = 0 //resets group current order (for ingame)
+      await group.save()
       await controlHasGameEnded(event, group)
     }
     await clearGroupMemberVote(group.id)
