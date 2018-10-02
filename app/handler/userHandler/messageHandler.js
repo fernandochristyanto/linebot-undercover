@@ -35,6 +35,7 @@ module.exports = async (event) => {
         user.eliminated = true
         await user.save()
         if (user.eliminationGuess) {
+          await clearGroupMemberVote(group.id)
           group.currentOrder = 0;
           group.groupMembers.remove(user.id)
           await group.save()
