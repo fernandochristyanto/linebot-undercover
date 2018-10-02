@@ -148,6 +148,7 @@ async function toNextTurn(event, group) {
         await eliminateMember.save()
       }
       else {
+        group.groupMembers.remove(eliminateMember.id)
         group.currentOrder = 0 //resets group current order (for ingame)
         await group.save()
         await controlHasGameEnded(event, group)

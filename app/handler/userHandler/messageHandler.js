@@ -36,6 +36,7 @@ module.exports = async (event) => {
         await user.save()
         if (user.eliminationGuess) {
           group.currentOrder = 0;
+          group.groupMembers.remove(user.id)
           await group.save()
           const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }], orderNumber: 0 });
           client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
