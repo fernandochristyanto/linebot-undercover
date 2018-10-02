@@ -61,7 +61,7 @@ async function votePostbackHandler(event, data) {
 }
 
 async function memberHasVoted(event, group) {
-  const groupMembers = await db.TrGroupMember.find({ groupId: group.id })
+  const groupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }] })
   let votedGroupMembers = new Array()
   let notVotedGroupMembers = new Array()
   for (let i = 0; i < groupMembers.length; i++) {
@@ -81,7 +81,7 @@ async function memberHasVoted(event, group) {
      *  - member1
      *  - member2
      */
-    
+
     const groupLineId = group.lineId;
     const replyText = mapVotedMembersToReplyText(votedGroupMembers)
     client.pushMessage(groupLineId, {
