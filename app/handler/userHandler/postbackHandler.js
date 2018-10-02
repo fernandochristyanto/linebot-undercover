@@ -135,6 +135,8 @@ async function toNextTurn(event, group) {
       eliminateMember.eliminated = true;
       await eliminateMember.save()
       await removeUneliminatedOrderNumberGap(group.id)
+      group.currentOrder = group.currentOrder - 1
+      await group.save()
       client.pushMessage(group.lineId, {
         type: MESSAGE_TYPE.TEXT,
         text: `${eliminateMember.fullName} telah di eliminasi berdasarkan vote. Role: ${eliminateMember.role}.`
