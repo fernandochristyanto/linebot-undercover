@@ -9,7 +9,7 @@ exports.clearGroupMemberVote = async (groupId) => {
   return await db.TrGroupMember.update({
     groupId: new ObjectId(groupId)
   }, {
-    voted: false, voteUserId: undefined
-  })
+      voted: false, voteUserId: undefined
+    }, { multi: true })
   // return await db.TrGroupMember.find({ groupId: groupId }).update({ voted: false, voteUserId: undefined })
 }
