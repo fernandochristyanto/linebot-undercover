@@ -21,7 +21,7 @@ module.exports = async (event) => {
       const guess = event.message.text
       const group = await db.TrGroup.findById(user.groupId)
       console.log("Group : ", group)
-      if (guess.toLowerCase() === group.currentWord.toLowerCase()) {
+      if (guess.toLowerCase() === group.correctWord.toLowerCase()) {
         // Tebakan benar
         return client.pushMessage(group.lineId, {
           type: MESSAGE_TYPE.TEXT,
