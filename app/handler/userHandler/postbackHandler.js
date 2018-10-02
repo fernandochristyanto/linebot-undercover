@@ -74,7 +74,14 @@ async function memberHasVoted(event, group) {
   }
 
   if (notVotedGroupMembers.length > 0) {
-    // Ada yg belum voting
+    /**
+     * Ada yg belum voting
+     * Reply ke grup : 
+     * Member yang telah melakukan voting: 
+     *  - member1
+     *  - member2
+     */
+    
     const groupLineId = group.lineId;
     const replyText = mapVotedMembersToReplyText(votedGroupMembers)
     client.pushMessage(groupLineId, {
