@@ -19,7 +19,7 @@ module.exports = async (event) => {
   if (isUserWhiteguy(user)) {
     if (canWhiteGuyGuess(user)) {
       const guess = event.message.text
-      const group = await db.TrGroup.findOne({ id: user.groupId })
+      const group = await db.TrGroup.findById(user.groupId)
       console.log("Group : ", group)
       if (guess.toLowerCase() === group.currentWord.toLowerCase()) {
         // Tebakan benar
