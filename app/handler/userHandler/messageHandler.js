@@ -15,10 +15,12 @@ module.exports = async (event) => {
   const isUserWhiteguy = (user) => user.role == ROLE.WHITEGUY
   const canWhiteGuyGuess = (whiteguy) => whiteguy.eliminationGuess || whiteguy.finalTwoGuess
 
-  if (isUserWhiteguy) {
-    if (canWhiteGuyGuess) {
+  console.log("User : ", user)
+  if (isUserWhiteguy(user)) {
+    if (canWhiteGuyGuess(whiteguy)) {
       const guess = event.message.text
       const group = await db.TrGroup.findOne({ id: user.groupId })
+      console.log("Group : ", group)
       if (guess.toLowerCase() === group.currentWord.toLowerCase()) {
         // Tebakan benar
         return client.pushMessage(group.lineId, {
