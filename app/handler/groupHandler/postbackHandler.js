@@ -64,7 +64,7 @@ async function ingamePostbackHandler(event, data) {
     }
     else {
       // Send ingame postback
-      const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder })
+      const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: currentOrder, $or: [{ eliminated: false }, { eliminated: undefined }] })
       await group.save();
       return client.replyMessage(event.replyToken, ingamePostbackTemplate(currentUser.fullName, currentOrder))
     }
