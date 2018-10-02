@@ -17,7 +17,7 @@ module.exports = async (event) => {
 
   console.log("User : ", user)
   if (isUserWhiteguy(user)) {
-    if (canWhiteGuyGuess(whiteguy)) {
+    if (canWhiteGuyGuess(user)) {
       const guess = event.message.text
       const group = await db.TrGroup.findOne({ id: user.groupId })
       console.log("Group : ", group)
