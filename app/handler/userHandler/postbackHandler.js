@@ -100,7 +100,7 @@ async function toNextTurn(event, group) {
     members = {}
     groupMembers.forEach(groupMember => {
       if (members[groupMember.voteUserId] == undefined) {
-        members[groupMember.voteUserId] = 0
+        members[groupMember.voteUserId] = 1
       }
       else {
         members[groupMember.voteUserId] = members[groupMember.voteUserId] + 1;
