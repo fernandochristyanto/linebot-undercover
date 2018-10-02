@@ -39,6 +39,10 @@ module.exports = async (event) => {
           await group.save()
           const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }], orderNumber: 0 });
           client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
+
+          user.eliminationGuess = undefined
+          user.finalTwoGuess = undefined
+          await user.save()
         }
         else if (user.finalTwoGuess) {
           const remainingUser = await db.TrGroupMember.findOne({ groupId: group.id })
@@ -47,6 +51,9 @@ module.exports = async (event) => {
             text: `Tebakan whiteguy salah, ${remainingUser.role} memenangkan game`
           })
 
+          user.eliminationGuess = undefined
+          user.finalTwoGuess = undefined
+          await user.save()
           await removeGroupAndMember(user.groupId)
         }
       }
