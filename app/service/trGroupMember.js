@@ -5,5 +5,5 @@ exports.getUnEliminatedMembers = async (groupId) => {
 }
 
 exports.clearGroupMemberVote = async (groupId) => {
-  return await db.TrGroupMember.find({ group: groupId }).update({ voted: false, voteUserId: undefined })
+  return await db.TrGroupMember.find({ groupId: groupId }).update({ voted: false, voteUserId: undefined })
 }
