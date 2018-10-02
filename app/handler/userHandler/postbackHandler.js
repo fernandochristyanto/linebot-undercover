@@ -93,11 +93,11 @@ async function toNextTurn(event, group) {
   const getMostVotedMemberId = () => {
     members = {}
     groupMembers.forEach(groupMember => {
-      if (!member[groupMember.voteUserId]) {
-        member[groupMember.voteUserId] = 0
+      if (!members[groupMember.voteUserId]) {
+        members[groupMember.voteUserId] = 0
       }
       else {
-        member[groupMember.voteUserId] += 1;
+        members[groupMember.voteUserId] += 1;
       }
     })
 
