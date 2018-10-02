@@ -135,7 +135,7 @@ async function toNextTurn(event, group) {
       eliminateMember.eliminated = true;
       await eliminateMember.save()
       await removeUneliminatedOrderNumberGap(group.id)
-      group.currentOrder = group.currentOrder - 1
+      group.currentOrder = 0 //resets group current order (for ingame)
       await group.save()
       client.pushMessage(group.lineId, {
         type: MESSAGE_TYPE.TEXT,
