@@ -135,8 +135,6 @@ async function toNextTurn(event, group) {
       eliminateMember.eliminated = true;
       await eliminateMember.save()
       await removeUneliminatedOrderNumberGap(group.id)
-      group.currentOrder = 0 //resets group current order (for ingame)
-      await group.save()
       client.pushMessage(group.lineId, {
         type: MESSAGE_TYPE.TEXT,
         text: `${eliminateMember.fullName} telah di eliminasi berdasarkan vote. Role: ${eliminateMember.role}.`
@@ -150,6 +148,8 @@ async function toNextTurn(event, group) {
         await eliminateMember.save()
       }
       else {
+        group.currentOrder = 0 //resets group current order (for ingame)
+        await group.save()
         await controlHasGameEnded(event, group)
       }
     }
@@ -207,7 +207,6 @@ async function controlHasGameEnded(event, group) {
     else {
       // To next round
       const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, orderNumber: 0 });
-      console.log("Pushing message to group again")
       client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
     }
   }
