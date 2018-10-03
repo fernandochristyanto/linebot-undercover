@@ -38,8 +38,33 @@ module.exports = async (event) => {
           group.groupMembers.remove(user.id)
           await group.save()
           const currentUser = await db.TrGroupMember.findOne({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }], orderNumber: 0 });
-          client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
 
+          if (group.groupMembers.length <= 2) {
+            // Cek siapa yg menang / draw
+            const remainingGroupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }], orderNumber: 0 })
+            const undercovers = remainingGroupMembers.filter(member => member.role === ROLE.UNDERCOVER)
+            if (undercovers.length == 2) {
+              client.pushMessage(group.lineId, {
+                type: MESSAGE_TYPE.TEXT,
+                text: "Permainan telah selesai dimenangkan oleh undercover"
+              })
+            }
+            else if (undercovers.length == 1) {
+              client.pushMessage(group.lineId, {
+                type: MESSAGE_TYPE.TEXT,
+                text: "Permainan telah berakhir seri (undercover & member)"
+              })
+            }
+            else {
+              client.pushMessage(group.lineId, {
+                type: MESSAGE_TYPE.TEXT,
+                text: "Permainan telah selesai dimenangkan oleh member"
+              })
+            }
+          }
+          else {
+            client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
+          }
           user.eliminationGuess = undefined
           user.finalTwoGuess = undefined
           await user.save()
