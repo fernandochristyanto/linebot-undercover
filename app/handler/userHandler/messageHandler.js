@@ -41,7 +41,7 @@ module.exports = async (event) => {
 
           if (group.groupMembers.length <= 2) {
             // Cek siapa yg menang / draw
-            const remainingGroupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }], orderNumber: 0 })
+            const remainingGroupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }] })
             const undercovers = remainingGroupMembers.filter(member => member.role === ROLE.UNDERCOVER)
 
             console.log("Remaning group members: ", remainingGroupMembers)
@@ -64,6 +64,8 @@ module.exports = async (event) => {
                 text: "Permainan telah selesai dimenangkan oleh member"
               })
             }
+
+            await removeGroupAndMember(group.id)
           }
           else {
             client.pushMessage(group.lineId, ingamePostbackTemplate(currentUser.fullName, 0))
