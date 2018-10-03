@@ -43,6 +43,9 @@ module.exports = async (event) => {
             // Cek siapa yg menang / draw
             const remainingGroupMembers = await db.TrGroupMember.find({ groupId: group.id, $or: [{ eliminated: false }, { eliminated: undefined }], orderNumber: 0 })
             const undercovers = remainingGroupMembers.filter(member => member.role === ROLE.UNDERCOVER)
+
+            console.log("Remaning group members: ", remainingGroupMembers)
+            console.log("undercovers : ", undercovers)
             if (undercovers.length == 2) {
               client.pushMessage(group.lineId, {
                 type: MESSAGE_TYPE.TEXT,
